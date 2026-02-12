@@ -14,6 +14,7 @@ jest.mock('../models/orderModel.js');
 jest.mock('../helpers/authHelper.js');
 jest.mock('jsonwebtoken');
 
+// Zhu Shiqi, A0271719X
 describe('registerController', () => {
   let req, res;
 
@@ -383,7 +384,7 @@ describe('forgotPasswordController', () => {
     await forgotPasswordController(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({ message: 'Emai is required' });
+    expect(res.send).toHaveBeenCalledWith({ message: 'Email is required' });
   });
 
   it('should return error if answer is missing', async () => {
