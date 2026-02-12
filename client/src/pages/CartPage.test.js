@@ -133,6 +133,7 @@ describe('CartPage', () => {
             </MemoryRouter>
         );
     
+        // Click the button to redirect user
         const button = screen.getByText("Please Login to Checkout");
         fireEvent.click(button);
 
@@ -165,7 +166,7 @@ describe('CartPage', () => {
         const removeButton = getByText('Remove');
         fireEvent.click(removeButton);
 
-        // Ensure that resulting page shows no items and Total is 0
+        // Ensure that item is properly removed and localStorage is updated
         return waitFor(() => {
             expect(mockSetCart).toHaveBeenCalledWith([]);
             expect(localStorage.setItem).toHaveBeenCalledWith('cart', JSON.stringify([]));
@@ -231,6 +232,38 @@ describe('CartPage', () => {
         require('../context/auth').useAuth.mockReturnValue([
             {
                 user: { name: 'Test', address: 'Test'},
+                token: 'token'
+            },
+        jest.fn(),
+        ]);
+
+        // Render the page
+        const { getByText } = render(
+            <MemoryRouter initialEntries={['/cart']}>
+                <Routes>
+                    <Route path="/cart" element={<CartPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        // Find and click the Update Address button
+        const button = screen.getByText("Update Address");
+        fireEvent.click(button);
+
+        // Ensure that the redirect is done
+        return waitFor(() => {
+            expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/user/profile");
+        })
+    });
+
+    // Unneccessary test case? Used just to hit 100% coverage
+    it('should properly redirect users with no address when Update Address is pressed', () => {
+        axios.get.mockResolvedValue({ data: { clientToken: "token" } });
+
+        // Setup mock user
+        require('../context/auth').useAuth.mockReturnValue([
+            {
+                user: { name: 'Test'},
                 token: 'token'
             },
         jest.fn(),
@@ -347,7 +380,7 @@ describe('CartPage', () => {
                 user: { name: 'Test', address: 'Test' },
                 token: 'token'
             },
-        jest.fn(),
+            jest.fn(),
         ]);
         axios.get.mockResolvedValue({ data: { clientToken: "Client Token" } });
 
